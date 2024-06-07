@@ -1,6 +1,6 @@
 <div class="container">
     <h2>Login</h2>
-    <form>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="username">Username</label>
         <input id="username" formControlName="username" required>
@@ -9,7 +9,7 @@
         <label for="password">Password</label>
         <input id="password" type="password" formControlName="password" required>
       </div>
-      <button type="submit">Login</button>
+      <button type="submit" [disabled]="loginForm.invalid">Login</button>
     </form>
     <p>Don't have an account? <a routerLink="/signup">Sign up</a></p>
 </div>
