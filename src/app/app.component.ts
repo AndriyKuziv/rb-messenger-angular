@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +10,18 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
+  isAuthenticated: boolean = false;
+
+  constructor(private authService: AuthService, private router: Router) {
+    authService.authStatus.subscribe((isAuthenticated: boolean) => {
+      console.log(isAuthenticated);
+      this.isAuthenticated = isAuthenticated;
+    }) 
+  }
+
+  logout(){
+    this.authService.removeToken();
+    console.log("Called removal of the token");
+    this.router.navigate(['/login']);
+  }
 }
