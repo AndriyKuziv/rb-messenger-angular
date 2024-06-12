@@ -33,7 +33,7 @@ export class LoginComponent {
 
       const username = this.loginForm.value.username;
       const password = this.loginForm.value.password;
-      
+
       this.login(username, password);
     }
   }
@@ -43,6 +43,7 @@ export class LoginComponent {
     this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials)
     .pipe(catchError((error: any, caught: Observable<any>): Observable<any> => {
       console.error('Error!', error);
+      alert("An error occurred while trying to log in. Please try again.");
       return of();
     }))
     .subscribe(

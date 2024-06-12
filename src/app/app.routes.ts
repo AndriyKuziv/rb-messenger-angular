@@ -7,5 +7,5 @@ import { UserslistComponent } from './pages/userslist/userslist.component';
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
-    { path: 'userslist', component: UserslistComponent }
+    { path: 'userslist', component: UserslistComponent, canActivate: [authGuard] }
 ];
