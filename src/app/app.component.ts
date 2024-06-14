@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from './auth/auth.service';
+import { MatDividerModule } from '@angular/material/divider'
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ export class AppComponent {
     authService.authStatus.subscribe((isAuthenticated: boolean) => {
       console.log(isAuthenticated);
       this.isAuthenticated = isAuthenticated;
-    }) 
+    })
   }
 
   logout(){

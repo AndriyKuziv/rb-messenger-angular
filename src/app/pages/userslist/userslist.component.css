@@ -1,0 +1,14 @@
+#header {
+  display: inline;
+  align-content: center;
+}
+
+#paging-bar {
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+}
+
+#paging-bar button {
+  margin: 10px;
+}
