@@ -1,29 +1,12 @@
-import { CommonModule, NgIf } from '@angular/common';
 import { Component, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { UserService, User } from '../../services/user/user.service';
-import { MatDividerModule } from '@angular/material/divider'
-import { MatTableModule } from '@angular/material/table'
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatSelectModule } from '@angular/material/select';
-import { MatOptionModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatLabel } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FormsModule } from '@angular/forms';
+import { SharedModule } from '../../shared/shared.module';
 
 @Component({
   selector: 'app-userslist',
   standalone: true,
-  imports: [
-    MatTableModule, MatPaginatorModule, MatDividerModule, MatButtonModule,
-    MatCardModule, MatDialogModule, MatSelectModule, MatOptionModule, MatFormFieldModule,
-    MatLabel, MatInputModule, MatCheckboxModule, CommonModule, NgIf, FormsModule
-  ],
+  imports: [ SharedModule ],
   templateUrl: './userslist.component.html',
   styleUrl: './userslist.component.css'
 })
@@ -33,9 +16,6 @@ export class UserslistComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.updateUsersList();
   }
-
-  private prevButton = document.getElementById('prev-button');
-  private nextButton = document.getElementById('next-button');
 
   private users = new BehaviorSubject<User[]>([]);
   dataSource$: Observable<User[]> = this.users.asObservable();
@@ -57,7 +37,6 @@ export class UserslistComponent implements AfterViewInit {
 
   @Input() ascending: boolean = true;
   @Output() ascendingChange = new EventEmitter<boolean>();
-
 
   nextPage(){
     this.currentPage = this.currentPage + 1;

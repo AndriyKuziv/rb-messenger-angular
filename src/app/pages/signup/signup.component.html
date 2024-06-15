@@ -17,7 +17,9 @@
         <label for="password">Repeat password</label>
         <input id="rep-password" type="password" formControlName="repPassword" required>
       </div>
-      <button type="submit" [disabled]="signupForm.invalid">Sign Up</button>
+      <button type="submit" [disabled]="signupForm.invalid || isInProgress">Sign Up</button>
     </form>
     <p>Already have an account? <a routerLink="/login">Login</a></p>
+
+    <mat-progress-bar mode="indeterminate" *ngIf="isInProgress"></mat-progress-bar>
 </div>  

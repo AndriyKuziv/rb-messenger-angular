@@ -4,21 +4,18 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, catchError, of } from 'rxjs';
-
-interface LoginResponse{
-  token?: string;
-}
+import { SharedModule } from '../../shared/shared.module';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, FormsModule, ReactiveFormsModule],
+  imports: [RouterLink, RouterLinkActive, FormsModule, ReactiveFormsModule, SharedModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  private apiUrl = 'https://rb-messenger.azurewebsites.net';
+  isInProgress: boolean = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private http: HttpClient, private router: Router) {
     this.loginForm = this.fb.group({
@@ -30,30 +27,28 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       console.log("Submitted login request");
-
+      this.isInProgress = true;
+      
       const username = this.loginForm.value.username;
       const password = this.loginForm.value.password;
+      
+      this.authService.login(username, password).subscribe(
+        response => {
+          if(response.body && response.body.token){
+            this.authService.setToken(response.body.token);
+            console.log('Login compeleted successfully');
 
-      this.login(username, password);
+            this.router.navigate(['/userslist']);
+          }
+          else{
+            alert("An error occurred while trying to log in. Please try again.");
+          }
+          this.isInProgress = false;
+        }
+      );
     }
   }
 
-  login(username: string, password: string) {
-    const credentials = { username, password };
-    this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials)
-    .pipe(catchError((error: any, caught: Observable<any>): Observable<any> => {
-      console.error('Error!', error);
-      alert("An error occurred while trying to log in. Please try again.");
-      return of();
-    }))
-    .subscribe(
-      response => {
-        if(response.token){
-          console.log('Login compeleted successfully');
-          this.authService.setToken(response.token);
-          this.router.navigate(['/userslist']);
-        }
-      }
-    );
-  }
+
+
 }

@@ -9,8 +9,10 @@
         <label for="password">Password</label>
         <input id="password" type="password" formControlName="password" required>
       </div>
-      <button type="submit" [disabled]="loginForm.invalid">Login</button>
+      <button type="submit" [disabled]="loginForm.invalid || isInProgress">Login</button>
     </form>
     <p>Don't have an account? <a routerLink="/signup">Sign up</a></p>
+    
+    <mat-progress-bar mode="indeterminate" *ngIf="isInProgress"></mat-progress-bar>
 </div>
-  
+

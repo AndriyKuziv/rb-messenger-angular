@@ -64,7 +64,7 @@
 
 <mat-divider class="separator"></mat-divider>
 
-<div id="paging-bar">
-  <button mat-flat-button id="prev-button" (click)="previousPage()">Previous</button>
-  <button mat-flat-button id="next-button" (click)="nextPage()">Next</button>
+<div id="paging-bar" *ngIf="dataSource$ | async as users">
+  <button mat-flat-button id="prev-button" [disabled]="currentPage <= 0" (click)="previousPage()">Previous</button>
+  <button mat-flat-button id="next-button" [disabled]="users.length < currentNumberOfUsers" (click)="nextPage()">Next</button>
 </div>

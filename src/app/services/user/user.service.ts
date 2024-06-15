@@ -2,6 +2,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+export interface User {
+  id: number;
+  userName: string;
+  email: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,10 +38,4 @@ export class UserService {
 
     return this.http.post<User[]>(this.apiUrl + 'usersList', body, { headers: headers });
   }
-}
-
-export interface User {
-  id: number;
-  userName: string;
-  email: string;
 }
