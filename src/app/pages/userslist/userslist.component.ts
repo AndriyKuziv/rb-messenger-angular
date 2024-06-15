@@ -31,7 +31,7 @@ export class UserslistComponent implements AfterViewInit {
   constructor(private userService: UserService) { }
 
   ngAfterViewInit() {
-    this.filterUsers();
+    this.updateUsersList();
   }
 
   private prevButton = document.getElementById('prev-button');
@@ -43,44 +43,42 @@ export class UserslistComponent implements AfterViewInit {
   possibleNumbersOfUsers: number[] = [ 1, 2, 5, 10 ]
   displayedColumns: string[] = [ 'id', 'userName', 'email' ]
 
-  @Input() orderBy: string = this.displayedColumns[0];
-  @Output() orderByChange = new EventEmitter<string>();
-
   @Input() currentNumberOfUsers: number = this.possibleNumbersOfUsers[this.possibleNumbersOfUsers.length / 2];
   @Output() currentNumberOfUsersChange = new EventEmitter<number>();
 
   @Input() currentPage: number = 0;
   @Output() currentPageChange = new EventEmitter<number>();
+
+  @Input() valueContains: string = "";
+  @Output() valueContainsChange = new EventEmitter<string>();
+
+  @Input() orderBy: string = this.displayedColumns[0];
+  @Output() orderByChange = new EventEmitter<string>();
+
+  @Input() ascending: boolean = true;
+  @Output() ascendingChange = new EventEmitter<boolean>();
+
+
   nextPage(){
     this.currentPage = this.currentPage + 1;
     this.currentPageChange.emit(this.currentPage);
 
-    this.filterUsers();
+    this.updateUsersList();
 
     console.log("Current currentPage: " + this.currentPage.toString());
   }
+
   previousPage(){
     if (this.currentPage > 0){
       this.currentPage = this.currentPage - 1;
     }
     this.currentPageChange.emit(this.currentPage);
 
-    this.filterUsers();
+    this.updateUsersList();
 
     console.log("Current currentPage: " + this.currentPage.toString());
   }
 
-  @Input() valueContains: string = "";
-  @Output() valueContainsChange = new EventEmitter<string>();
-  setValueContains(text: string){
-    this.valueContains = text;
-    this.valueContainsChange.emit(this.valueContains);
-
-    console.log("Current valueContains: " + this.valueContains);
-  }
-
-  @Input() ascending: boolean = true;
-  @Output() ascendingChange = new EventEmitter<boolean>();
   setAscending(ascending: boolean){
     this.ascending = ascending;
     this.ascendingChange.emit(this.ascending);
@@ -88,7 +86,7 @@ export class UserslistComponent implements AfterViewInit {
     console.log("Current ascending: " + this.ascending);
   }
 
-  filterUsers(){
+  updateUsersList(){
     console.log("Calling api...");
     this.userService.getUsers(this.currentNumberOfUsers, this.currentPage,
       this.valueContains, this.ascending, this.orderBy)?.subscribe(
