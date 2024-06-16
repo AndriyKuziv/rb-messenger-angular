@@ -16,10 +16,10 @@ export class LoginComponent {
   loginForm: FormGroup;
   isInProgress: boolean = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router,
+  constructor(private _fb: FormBuilder, private _authService: AuthService, private _router: Router,
     private _snackBar: MatSnackBar
   ) {
-    this.loginForm = this.fb.group({
+    this.loginForm = this._fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
@@ -33,12 +33,12 @@ export class LoginComponent {
       const username = this.loginForm.value.username;
       const password = this.loginForm.value.password;
 
-      this.authService.login(username, password).subscribe(
+      this._authService.login(username, password).subscribe(
         response => {
           if(response.body && response.body.token){
-            this.authService.setToken(response.body.token);
+            this._authService.setToken(response.body.token);
 
-            this.router.navigate(['/userslist']);
+            this._router.navigate(['/userslist']);
           }
           else{
             this._snackBar.open(`An error occurred while trying to log in (Code: ${response.status}). Please try again.`, "Ok");

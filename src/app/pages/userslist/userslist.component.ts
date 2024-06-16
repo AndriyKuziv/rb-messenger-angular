@@ -14,10 +14,10 @@ export class UserslistComponent implements AfterViewInit {
   possibleNumbersOfUsers: number[] = [ 1, 2, 5, 10 ]
   displayedColumns: string[] = [ 'id', 'userName', 'email' ]
 
-  private users = new BehaviorSubject<User[]>([]);
-  dataSource$: Observable<User[]> = this.users.asObservable();
+  private _users = new BehaviorSubject<User[]>([]);
+  dataSource$: Observable<User[]> = this._users.asObservable();
 
-  constructor(private userService: UserService) { }
+  constructor(private _userService: UserService) { }
 
   @Input() currentNumberOfUsers: number = this.possibleNumbersOfUsers[this.possibleNumbersOfUsers.length / 2];
   @Output() currentNumberOfUsersChange = new EventEmitter<number>();
@@ -39,7 +39,7 @@ export class UserslistComponent implements AfterViewInit {
   }
 
   nextPage(){
-    if (this.users.getValue.length < this.currentNumberOfUsers){
+    if (this._users.getValue.length < this.currentNumberOfUsers){
       return;
     }
 
@@ -67,10 +67,10 @@ export class UserslistComponent implements AfterViewInit {
 
   updateUsersList(){
     console.log("Updating list of users...");
-    this.userService.getUsers(this.currentNumberOfUsers, this.currentPage,
+    this._userService.getUsers(this.currentNumberOfUsers, this.currentPage,
       this.valueContains, this.ascending, this.orderBy)?.subscribe(
         data => {
-          this.users.next(data);
+          this._users.next(data);
           console.log(data);
         }
       );

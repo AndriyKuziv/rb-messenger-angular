@@ -26,6 +26,10 @@ h2 {
     text-align: left;
 }
 
+.form-group small{
+  color: red;
+}
+
 label {
     display: block;
     margin-bottom: 5px;
