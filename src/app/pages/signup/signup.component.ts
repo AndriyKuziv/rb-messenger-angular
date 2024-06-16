@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, catchError, of } from 'rxjs';
 import { SharedModule } from '../../shared/shared.module';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-signup',
@@ -14,12 +13,12 @@ import { SharedModule } from '../../shared/shared.module';
   styleUrl: './signup.component.css'
 })
 export class SignupComponent {
-  private apiUrl = 'https://rb-messenger.azurewebsites.net';
-
   signupForm: FormGroup;
   isInProgress: boolean = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router,
+    private _snackBar: MatSnackBar
+  ) {
     this.signupForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -50,7 +49,7 @@ export class SignupComponent {
             this.router.navigate(['/', 'login']);
           }
           else{
-            alert(`An error occurred while trying to sign up (Code: ${response.status}). Please try again.`);
+            this._snackBar.open(`An error occurred while trying to sign up (Code: ${response.status}). Please try again.`, "Ok");
           }
           this.isInProgress = false;
         }

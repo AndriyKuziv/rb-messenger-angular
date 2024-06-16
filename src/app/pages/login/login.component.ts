@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, catchError, of } from 'rxjs';
 import { SharedModule } from '../../shared/shared.module';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, FormsModule, ReactiveFormsModule, SharedModule],
+  imports: [RouterLink, RouterLinkActive, SharedModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -17,7 +16,9 @@ export class LoginComponent {
   loginForm: FormGroup;
   isInProgress: boolean = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router,
+    private _snackBar: MatSnackBar
+  ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -36,12 +37,11 @@ export class LoginComponent {
         response => {
           if(response.body && response.body.token){
             this.authService.setToken(response.body.token);
-            console.log('Login compeleted successfully');
 
             this.router.navigate(['/userslist']);
           }
           else{
-            alert(`An error occurred while trying to log in (Code: ${response.status}). Please try again.`);
+            this._snackBar.open(`An error occurred while trying to log in (Code: ${response.status}). Please try again.`, "Ok");
           }
           this.isInProgress = false;
         }
