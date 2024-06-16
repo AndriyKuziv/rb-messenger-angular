@@ -15,13 +15,11 @@ import { SharedModule } from '../../shared/shared.module';
 })
 export class SignupComponent {
   private apiUrl = 'https://rb-messenger.azurewebsites.net';
-  
+
   signupForm: FormGroup;
   isInProgress: boolean = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService,
-    private http: HttpClient, private router: Router
-  ) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.signupForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -34,7 +32,7 @@ export class SignupComponent {
     if (this.signupForm.valid) {
       console.log("Submitted signup request");
       console.log(this.signupForm.value);
-      
+
       const password = this.signupForm.value.password;
       const repPassword = this.signupForm.value.repPassword;
       if (password != repPassword){
@@ -44,30 +42,20 @@ export class SignupComponent {
 
       const username = this.signupForm.value.username;
       const email = this.signupForm.value.email;
-      
+
       this.isInProgress = true;
-      this.signup(username, email, password);
+      this.authService.signup(username, email, password).subscribe(
+        response => {
+          if (response.status >= 200 && response.status < 300){
+            this.router.navigate(['/', 'login']);
+          }
+          else{
+            alert(`An error occurred while trying to sign up (Code: ${response.status}). Please try again.`);
+          }
+          this.isInProgress = false;
+        }
+      );
     }
   }
 
-  signup(username: string, email: string, password: string){
-    const credentials = { username, email, password };
-    this.http.post(`${this.apiUrl}/auth/signup`, credentials)
-    .pipe(catchError((error: any, caught: Observable<any>): Observable<any> => {
-      console.error('Error!', error);
-      alert("An error occurred while trying to sign up. Please try again.")
-      return of();
-    }))
-    .subscribe(
-      response => {
-        this.router.navigate(['/', 'login'])
-          .then(nav => {
-            console.log('Navigation succcessful');
-          }, err => {
-            console.log(err);
-          });
-          this.isInProgress = false;
-      }
-    );
-  }
 }

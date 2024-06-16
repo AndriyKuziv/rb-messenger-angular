@@ -19,7 +19,7 @@
 
     <mat-form-field>
       <mat-label>Number of users</mat-label>
-      <mat-select [(value)]="currentNumberOfUsers">
+      <mat-select [(value)]="currentNumberOfUsers" (valueChange)="updateUsersList()">
         @for (numberOfUsers of possibleNumbersOfUsers; track numberOfUsers){
           <mat-option [value]="numberOfUsers">{{numberOfUsers}}</mat-option>
         }

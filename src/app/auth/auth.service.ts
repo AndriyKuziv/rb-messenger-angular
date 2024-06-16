@@ -27,14 +27,38 @@ export class AuthService {
       }
     )
     .pipe(
-      map(response => {        
+      map(response => {
         return response;
       }),
-      catchError((error: any, caught: Observable<any>): Observable<any> => {
+      catchError((error: HttpErrorResponse) => {
         console.error('Error!', error);
-        
-        return of(new HttpResponse<LoginResponse>({ body: {} as LoginResponse, status: 500}));
-    })
+        return of(new HttpResponse<any>({
+          body: error.error,
+          status: error.status,
+          statusText: error.statusText,
+          headers: error.headers
+        }));
+      })
+    );
+  }
+
+  signup(username: string, email: string, password: string): Observable<HttpResponse<any>>{
+    const credentials = { username, email, password };
+
+    return this.http.post(`${this.apiUrl}/auth/signup`, credentials, { observe: 'response' })
+    .pipe(
+      map(response => {
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error!', error);
+        return of(new HttpResponse<any>({
+          body: error.error,
+          status: error.status,
+          statusText: error.statusText,
+          headers: error.headers
+        }));
+      })
     );
   }
 
@@ -42,12 +66,12 @@ export class AuthService {
     return !!localStorage.getItem(this.tokenName);
   }
 
-  setToken(token: string): void {
+  setToken(token: string) {
     localStorage.setItem(this.tokenName, token);
     this.authStateSubject.next(true);
   }
 
-  removeToken(): void {
+  removeToken() {
     localStorage.removeItem(this.tokenName);
     this.authStateSubject.next(false);
   }

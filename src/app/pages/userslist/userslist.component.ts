@@ -11,17 +11,13 @@ import { SharedModule } from '../../shared/shared.module';
   styleUrl: './userslist.component.css'
 })
 export class UserslistComponent implements AfterViewInit {
-  constructor(private userService: UserService) { }
-
-  ngAfterViewInit() {
-    this.updateUsersList();
-  }
+  possibleNumbersOfUsers: number[] = [ 1, 2, 5, 10 ]
+  displayedColumns: string[] = [ 'id', 'userName', 'email' ]
 
   private users = new BehaviorSubject<User[]>([]);
   dataSource$: Observable<User[]> = this.users.asObservable();
 
-  possibleNumbersOfUsers: number[] = [ 1, 2, 5, 10 ]
-  displayedColumns: string[] = [ 'id', 'userName', 'email' ]
+  constructor(private userService: UserService) { }
 
   @Input() currentNumberOfUsers: number = this.possibleNumbersOfUsers[this.possibleNumbersOfUsers.length / 2];
   @Output() currentNumberOfUsersChange = new EventEmitter<number>();
@@ -38,35 +34,39 @@ export class UserslistComponent implements AfterViewInit {
   @Input() ascending: boolean = true;
   @Output() ascendingChange = new EventEmitter<boolean>();
 
+  ngAfterViewInit() {
+    this.updateUsersList();
+  }
+
   nextPage(){
-    this.currentPage = this.currentPage + 1;
+    if (this.users.getValue.length < this.currentNumberOfUsers){
+      return;
+    }
+
+    this.currentPage++;
     this.currentPageChange.emit(this.currentPage);
 
     this.updateUsersList();
-
-    console.log("Current currentPage: " + this.currentPage.toString());
   }
 
   previousPage(){
-    if (this.currentPage > 0){
-      this.currentPage = this.currentPage - 1;
+    if (this.currentPage <= 0){
+      return;
     }
+
+    this.currentPage--;
     this.currentPageChange.emit(this.currentPage);
 
     this.updateUsersList();
-
-    console.log("Current currentPage: " + this.currentPage.toString());
   }
 
   setAscending(ascending: boolean){
     this.ascending = ascending;
     this.ascendingChange.emit(this.ascending);
-
-    console.log("Current ascending: " + this.ascending);
   }
 
   updateUsersList(){
-    console.log("Calling api...");
+    console.log("Updating list of users...");
     this.userService.getUsers(this.currentNumberOfUsers, this.currentPage,
       this.valueContains, this.ascending, this.orderBy)?.subscribe(
         data => {
@@ -75,6 +75,4 @@ export class UserslistComponent implements AfterViewInit {
         }
       );
   }
-
-
 }

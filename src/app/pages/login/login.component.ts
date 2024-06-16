@@ -17,7 +17,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   isInProgress: boolean = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private http: HttpClient, private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -28,10 +28,10 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       console.log("Submitted login request");
       this.isInProgress = true;
-      
+
       const username = this.loginForm.value.username;
       const password = this.loginForm.value.password;
-      
+
       this.authService.login(username, password).subscribe(
         response => {
           if(response.body && response.body.token){
@@ -41,14 +41,12 @@ export class LoginComponent {
             this.router.navigate(['/userslist']);
           }
           else{
-            alert("An error occurred while trying to log in. Please try again.");
+            alert(`An error occurred while trying to log in (Code: ${response.status}). Please try again.`);
           }
           this.isInProgress = false;
         }
       );
     }
   }
-
-
 
 }
