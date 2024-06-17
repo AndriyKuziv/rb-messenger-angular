@@ -39,7 +39,10 @@ export class UserslistComponent implements AfterViewInit {
   }
 
   nextPage(){
-    if (this._users.getValue.length < this.currentNumberOfUsers){
+    if (this._users.getValue().length < this.currentNumberOfUsers){
+      console.error(`Chosen number of users and current number of users in the list do not match.
+        List of users length: ${this._users.getValue.length};
+        Chosen number of users: ${this.currentNumberOfUsers}`);
       return;
     }
 
