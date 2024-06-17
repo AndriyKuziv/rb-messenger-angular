@@ -19,8 +19,8 @@ export class UserslistComponent implements AfterViewInit {
 
   constructor(private _userService: UserService) { }
 
-  @Input() currentNumberOfUsers: number = this.possibleNumbersOfUsers[this.possibleNumbersOfUsers.length / 2];
-  @Output() currentNumberOfUsersChange = new EventEmitter<number>();
+  @Input() numberOfUsers: number = this.possibleNumbersOfUsers[this.possibleNumbersOfUsers.length / 2];
+  @Output() numberOfUsersChange = new EventEmitter<number>();
 
   @Input() currentPage: number = 0;
   @Output() currentPageChange = new EventEmitter<number>();
@@ -39,10 +39,10 @@ export class UserslistComponent implements AfterViewInit {
   }
 
   nextPage(){
-    if (this._users.getValue().length < this.currentNumberOfUsers){
+    if (this._users.getValue().length < this.numberOfUsers){
       console.error(`Chosen number of users and current number of users in the list do not match.
         List of users length: ${this._users.getValue.length};
-        Chosen number of users: ${this.currentNumberOfUsers}`);
+        Chosen number of users: ${this.numberOfUsers}`);
       return;
     }
 
@@ -70,7 +70,7 @@ export class UserslistComponent implements AfterViewInit {
 
   updateUsersList(){
     console.log("Updating list of users...");
-    this._userService.getUsers(this.currentNumberOfUsers, this.currentPage,
+    this._userService.getUsers(this.numberOfUsers, this.currentPage,
       this.valueContains, this.ascending, this.orderBy)?.subscribe(
         data => {
           this._users.next(data);

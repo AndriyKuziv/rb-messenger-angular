@@ -19,7 +19,7 @@
 
     <mat-form-field>
       <mat-label>Number of users</mat-label>
-      <mat-select [(value)]="currentNumberOfUsers" (valueChange)="updateUsersList()">
+      <mat-select [(value)]="numberOfUsers" (valueChange)="updateUsersList()">
         @for (numberOfUsers of possibleNumbersOfUsers; track numberOfUsers){
           <mat-option [value]="numberOfUsers">{{numberOfUsers}}</mat-option>
         }
@@ -66,5 +66,5 @@
 
 <div id="paging-bar" *ngIf="dataSource$ | async as users">
   <button mat-flat-button id="prev-button" [disabled]="currentPage <= 0" (click)="previousPage()">Previous</button>
-  <button mat-flat-button id="next-button" [disabled]="users.length < currentNumberOfUsers" (click)="nextPage()">Next</button>
+  <button mat-flat-button id="next-button" [disabled]="users.length < numberOfUsers" (click)="nextPage()">Next</button>
 </div>
