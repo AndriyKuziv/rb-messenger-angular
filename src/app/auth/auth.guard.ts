@@ -1,12 +1,14 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from './auth.service';
+import { JwtHelperService } from '@auth0/angular-jwt'
 
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
+  const jwtHelper = new JwtHelperService();
 
-  if (token && isValid(token)){
+  if (token && !jwtHelper.isTokenExpired(token)){
     return true;
   }
 
@@ -15,16 +17,3 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   return false;
 };
-
-function isValid(token: string){
-  const tokenPayload = parseJwt(token);
-  return tokenPayload && new Date(tokenPayload.exp * 1000) > new Date();
-}
-
-function parseJwt(token: string) {
-  try {
-    return JSON.parse(atob(token.split('.')[1]));
-  } catch (e) {
-    return null;
-  }
-}
