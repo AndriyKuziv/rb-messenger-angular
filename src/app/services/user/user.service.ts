@@ -25,8 +25,7 @@ export class UserService {
     }
 
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Content-Type': 'application/json'
     });
     const body = {
       numberOfUsers: numberOfUsers,

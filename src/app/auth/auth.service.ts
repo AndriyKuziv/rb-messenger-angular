@@ -8,19 +8,19 @@ import { LoginResponse } from '../shared/models/loginResponse'
   providedIn: 'root'
 })
 export class AuthService {
-  private tokenName = "token";
-  private apiUrl = 'https://rb-messenger.azurewebsites.net';
+  private _tokenName = "token";
+  private _apiUrl = 'https://rb-messenger.azurewebsites.net';
 
-  private authStateSubject = new BehaviorSubject<boolean>(this.hasToken());
-  authStatus: Observable<boolean> = this.authStateSubject.asObservable();
+  private _authStateSubject = new BehaviorSubject<boolean>(this.hasToken());
+  authStatus$: Observable<boolean> = this._authStateSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private _http: HttpClient) {}
 
   login(username: string, password: string): Observable<HttpResponse<LoginResponse>> {
     const credentials = { username, password };
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials,
+    return this._http.post<LoginResponse>(`${this._apiUrl}/auth/login`, credentials,
       {
         headers,
         observe: 'response'
@@ -42,10 +42,15 @@ export class AuthService {
     );
   }
 
+  logout(){
+    this.removeToken();
+    console.log("Removed the token");
+  }
+
   signup(username: string, email: string, password: string): Observable<HttpResponse<any>>{
     const credentials = { username, email, password };
 
-    return this.http.post(`${this.apiUrl}/auth/signup`, credentials, { observe: 'response' })
+    return this._http.post(`${this._apiUrl}/auth/signup`, credentials, { observe: 'response' })
     .pipe(
       map(response => {
         return response;
@@ -63,16 +68,20 @@ export class AuthService {
   }
 
   private hasToken(): boolean {
-    return !!localStorage.getItem(this.tokenName);
+    return !!localStorage.getItem(this._tokenName);
+  }
+
+  getToken(){
+    return localStorage.getItem(this._tokenName);
   }
 
   setToken(token: string) {
-    localStorage.setItem(this.tokenName, token);
-    this.authStateSubject.next(true);
+    localStorage.setItem(this._tokenName, token);
+    this._authStateSubject.next(true);
   }
 
   removeToken() {
-    localStorage.removeItem(this.tokenName);
-    this.authStateSubject.next(false);
+    localStorage.removeItem(this._tokenName);
+    this._authStateSubject.next(false);
   }
 }

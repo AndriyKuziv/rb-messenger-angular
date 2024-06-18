@@ -12,15 +12,14 @@ import { AuthService } from './auth/auth.service';
 export class AppComponent {
   isAuthenticated: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {
-    authService.authStatus.subscribe((isAuthenticated: boolean) => {
+  constructor(private _authService: AuthService, private _router: Router) {
+    _authService.authStatus$.subscribe((isAuthenticated: boolean) => {
       this.isAuthenticated = isAuthenticated;
     })
   }
 
   logout(){
-    this.authService.removeToken();
-    console.log("Removed the token");
-    this.router.navigate(['/login']);
+    this._authService.logout();
+    this._router.navigate(['/login']);
   }
 }
