@@ -1,7 +1,8 @@
 import { Component, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { UserService, User } from '../../services/user/user.service';
 import { SharedModule } from '../../shared/shared.module';
+import { User } from '../../shared/models/user';
+import { UserService } from '../../services/user/user.service';
 
 @Component({
   selector: 'app-userslist',
