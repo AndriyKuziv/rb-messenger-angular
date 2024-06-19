@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators, ValidationErrors } from '@angular/forms';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, NavigationStart } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { SharedModule } from '../../shared/shared.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
+import { defaultSnackbarConfig } from '../../shared/configs/defaultSnackbarConfig';
 
 @Component({
   selector: 'app-signup',
@@ -12,12 +14,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css'
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit, OnDestroy {
   signupForm: FormGroup;
   minUsernameLen = 4;
   minPasswordLen = 6;
 
   isInProgress: boolean = false;
+
+  private _routerSubscription!: Subscription;
 
   constructor(private _fb: FormBuilder, private _authService: AuthService, private _router: Router,
     private _snackBar: MatSnackBar
@@ -28,6 +32,14 @@ export class SignupComponent {
       password: ['', [Validators.required, Validators.minLength(this.minPasswordLen), this.passwordValidator]],
       confirmPassword: ['', [Validators.required]]
     }, { validator: this.passwordMatchValidator });
+  }
+
+  ngOnInit() {
+    this._routerSubscription = this._router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this._snackBar.dismiss();
+      }
+    });
   }
 
   passwordMatchValidator(form: FormGroup){
@@ -63,7 +75,7 @@ export class SignupComponent {
             this._router.navigate(['/', 'login']);
           }
           else{
-            this._snackBar.open(`An error occurred while trying to sign up (Code: ${response.status}). Please try again.`, "Ok");
+            this._snackBar.open(`An error occurred while trying to sign up (Code: ${response.status}). Please try again.`, "Ok", defaultSnackbarConfig);
           }
           this.isInProgress = false;
         }
@@ -71,4 +83,9 @@ export class SignupComponent {
     }
   }
 
+  ngOnDestroy() {
+    if (this._routerSubscription) {
+      this._routerSubscription.unsubscribe();
+    }
+  }
 }

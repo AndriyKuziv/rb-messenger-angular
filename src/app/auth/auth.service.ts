@@ -18,7 +18,7 @@ export class AuthService {
 
   login(username: string, password: string): Observable<HttpResponse<LoginResponse>> {
     const credentials = { username, password };
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'skip': 'true' });
 
     return this._http.post<LoginResponse>(`${this._apiUrl}/auth/login`, credentials,
       {
@@ -49,8 +49,9 @@ export class AuthService {
 
   signup(username: string, email: string, password: string): Observable<HttpResponse<any>>{
     const credentials = { username, email, password };
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'skip': 'true' });
 
-    return this._http.post(`${this._apiUrl}/auth/signup`, credentials, { observe: 'response' })
+    return this._http.post(`${this._apiUrl}/auth/signup`, credentials, { headers, observe: 'response' })
     .pipe(
       map(response => {
         return response;
