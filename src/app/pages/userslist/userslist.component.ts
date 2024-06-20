@@ -1,5 +1,5 @@
-import { Component, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Component, AfterViewInit, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
+import { BehaviorSubject, Observable, map, pipe } from 'rxjs';
 import { SharedModule } from '../../shared/shared.module';
 import { User } from '../../shared/models/user';
 import { UserService } from '../../services/user/user.service';
@@ -13,12 +13,14 @@ import { UserService } from '../../services/user/user.service';
 })
 export class UserslistComponent implements AfterViewInit {
   possibleNumbersOfUsers: number[] = [ 1, 2, 5, 10 ]
-  displayedColumns: string[] = [ 'id', 'userName', 'email' ]
+  displayedColumns: string[] = [ 'id', 'userName', 'email', 'phoneNumber' ]
 
   private _users = new BehaviorSubject<User[]>([]);
   dataSource$: Observable<User[]> = this._users.asObservable();
 
   constructor(private _userService: UserService) { }
+
+  @ViewChild('nextButton', { read: ElementRef }) nextButton!: ElementRef<HTMLButtonElement>;
 
   @Input() numberOfUsers: number = this.possibleNumbersOfUsers[this.possibleNumbersOfUsers.length / 2];
   @Output() numberOfUsersChange = new EventEmitter<number>();
@@ -40,13 +42,6 @@ export class UserslistComponent implements AfterViewInit {
   }
 
   nextPage(){
-    if (this._users.getValue().length < this.numberOfUsers){
-      console.error(`Chosen number of users and current number of users in the list do not match.
-        List of users length: ${this._users.getValue.length};
-        Chosen number of users: ${this.numberOfUsers}`);
-      return;
-    }
-
     this.currentPage++;
     this.currentPageChange.emit(this.currentPage);
 
@@ -74,9 +69,27 @@ export class UserslistComponent implements AfterViewInit {
     this._userService.getUsers(this.numberOfUsers, this.currentPage,
       this.valueContains, this.ascending, this.orderBy)?.subscribe(
         data => {
-          this._users.next(data);
+          if (data.length > 0){
+            this._users.next(data);
+
+            if (this.nextButton.nativeElement && this.nextButton.nativeElement.disabled){
+              this.dataSource$.subscribe(users => {
+                this.nextButton.nativeElement.disabled = users.length < this.numberOfUsers;
+              });
+            }
+          }
+          else{
+            if(this.nextButton.nativeElement){
+              this.nextButton.nativeElement.disabled = true;
+
+              this.currentPage--;
+              this.currentPageChange.emit(this.currentPage);
+            }
+            else{
+              console.error("Button for next page is null or undefined");
+            }
+          }
           console.log(data);
-        }
-      );
+      });
   }
 }

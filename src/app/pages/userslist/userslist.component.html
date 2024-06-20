@@ -56,6 +56,11 @@
         <td mat-cell *matCellDef="let user"> {{user.email}} </td>
       </ng-container>
 
+      <ng-container matColumnDef="phoneNumber">
+        <th mat-header-cell *matHeaderCellDef> Phone number </th>
+        <td mat-cell *matCellDef="let user"> {{user.phoneNumber}} </td>
+      </ng-container>
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </mat-table>
@@ -66,5 +71,5 @@
 
 <div id="paging-bar" *ngIf="dataSource$ | async as users">
   <button mat-flat-button id="prev-button" [disabled]="currentPage <= 0" (click)="previousPage()">Previous</button>
-  <button mat-flat-button id="next-button" [disabled]="users.length < numberOfUsers" (click)="nextPage()">Next</button>
+  <button mat-flat-button id="next-button" #nextButton [disabled]="users.length < numberOfUsers" (click)="nextPage()">Next</button>
 </div>
