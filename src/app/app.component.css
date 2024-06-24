@@ -45,3 +45,15 @@
 .nav-link:hover {
     text-decoration: underline;
 }
+
+.success-snack-bar-panel{
+  background-color: rgb(100, 221, 114);
+}
+
+.err-snack-bar-panel{
+  background-color: rgb(245, 115, 115);
+}
+
+.warn-snack-bar-panel{
+  background-color: rgb(213, 213, 103);
+}
