@@ -1,67 +1,91 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators, ValidationErrors } from '@angular/forms';
+import { Router, RouterLink, RouterLinkActive, NavigationStart } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, catchError, of } from 'rxjs';
+import { SharedModule } from '../../shared/shared.module';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
+import { defaultSnackbarConfig } from '../../shared/configs/defaultSnackbarConfig';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, FormsModule, ReactiveFormsModule],
+  imports: [RouterLink, RouterLinkActive, SharedModule],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css'
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit, OnDestroy {
   signupForm: FormGroup;
-  private apiUrl = 'https://rb-messenger.azurewebsites.net';
+  minUsernameLen = 4;
+  minPasswordLen = 6;
 
-  constructor(private fb: FormBuilder, private authService: AuthService,
-    private http: HttpClient, private router: Router
+  isInProgress: boolean = false;
+
+  private _routerSubscription!: Subscription;
+
+  constructor(private _fb: FormBuilder, private _authService: AuthService, private _router: Router,
+    private _snackBar: MatSnackBar
   ) {
-    this.signupForm = this.fb.group({
-      username: ['', Validators.required],
+    this.signupForm = this._fb.group({
+      username: ['', [Validators.required, Validators.minLength(this.minUsernameLen)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      repPassword: ['', Validators.required]
+      password: ['', [Validators.required, Validators.minLength(this.minPasswordLen), this.passwordValidator]],
+      confirmPassword: ['', [Validators.required]]
+    }, { validator: this.passwordMatchValidator });
+  }
+
+  ngOnInit() {
+    this._routerSubscription = this._router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this._snackBar.dismiss();
+      }
     });
+  }
+
+  passwordMatchValidator(form: FormGroup){
+    return form.get('password')?.value === form.get('confirmPassword')?.value
+      ? null : { mismatch: true };
+  }
+
+  passwordValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.value;
+    if (!password) return null;
+
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    const valid = hasUpperCase && hasNumber && hasSymbol;
+
+    return valid ? null : { invalidPassword: true };
   }
 
   onSubmit() {
     if (this.signupForm.valid) {
       console.log("Submitted signup request");
-      console.log(this.signupForm.value);
-      
-      const password = this.signupForm.value.password;
-      const repPassword = this.signupForm.value.repPassword;
-      if (password != repPassword){
-        console.error('Passwords do not match');
-        return;
-      }
 
       const username = this.signupForm.value.username;
+      const password = this.signupForm.value.password;
       const email = this.signupForm.value.email;
 
-      this.signup(username, email, password);
+      this.isInProgress = true;
+      this._authService.signup(username, email, password).subscribe(
+        response => {
+          if (response.status >= 200 && response.status < 300){
+            this._router.navigate(['/', 'login']);
+          }
+          else{
+            this._snackBar.open(`An error occurred while trying to sign up (Code: ${response.status}). Please try again.`, "Ok", defaultSnackbarConfig);
+          }
+          this.isInProgress = false;
+        }
+      );
     }
   }
 
-  signup(username: string, email: string, password: string){
-    const credentials = { username, email, password };
-    this.http.post(`${this.apiUrl}/auth/signup`, credentials)
-    .pipe(catchError((error: any, caught: Observable<any>): Observable<any> => {
-      console.error('Error!', error);
-      return of();
-    }))
-    .subscribe(
-      response => {
-        this.router.navigate(['/', 'login'])
-          .then(nav => {
-            console.log('Navigation succcessful');
-          }, err => {
-            console.log(err);
-          });
-      }
-    );
+  ngOnDestroy() {
+    if (this._routerSubscription) {
+      this._routerSubscription.unsubscribe();
+    }
   }
 }
