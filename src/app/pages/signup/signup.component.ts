@@ -1,11 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive, NavigationStart } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { SharedModule } from '../../shared/shared.module';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription } from 'rxjs';
-import { defaultSnackbarConfig } from '../../shared/configs/defaultSnackbarConfig';
 
 @Component({
   selector: 'app-signup',
@@ -14,35 +11,30 @@ import { defaultSnackbarConfig } from '../../shared/configs/defaultSnackbarConfi
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css'
 })
-export class SignupComponent implements OnInit, OnDestroy {
+export class SignupComponent {
   signupForm: FormGroup;
   minUsernameLen = 4;
   minPasswordLen = 6;
 
-  isInProgress: boolean = false;
+  isSigningUp: boolean = false;
 
-  private _routerSubscription!: Subscription;
-
-  constructor(private _fb: FormBuilder, private _authService: AuthService, private _router: Router,
-    private _snackBar: MatSnackBar
+  constructor(
+    private _fb: FormBuilder,
+    private _authService: AuthService,
+    private _router: Router,
   ) {
     this.signupForm = this._fb.group({
       username: ['', [Validators.required, Validators.minLength(this.minUsernameLen)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(this.minPasswordLen), this.passwordValidator]],
       confirmPassword: ['', [Validators.required]]
-    }, { validator: this.passwordMatchValidator });
-  }
-
-  ngOnInit() {
-    this._routerSubscription = this._router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this._snackBar.dismiss();
-      }
+    },
+    {
+      validator: this.passwordMatchValidator
     });
   }
 
-  passwordMatchValidator(form: FormGroup){
+  passwordMatchValidator(form: FormGroup) {
     return form.get('password')?.value === form.get('confirmPassword')?.value
       ? null : { mismatch: true };
   }
@@ -53,7 +45,7 @@ export class SignupComponent implements OnInit, OnDestroy {
 
     const hasUpperCase = /[A-Z]/.test(password);
     const hasNumber = /\d/.test(password);
-    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const hasSymbol = /[!@#$%^&*(),.?":{}|<>=]/.test(password);
 
     const valid = hasUpperCase && hasNumber && hasSymbol;
 
@@ -68,24 +60,14 @@ export class SignupComponent implements OnInit, OnDestroy {
       const password = this.signupForm.value.password;
       const email = this.signupForm.value.email;
 
-      this.isInProgress = true;
+      this.isSigningUp = true;
       this._authService.signup(username, email, password).subscribe(
         response => {
-          if (response.status >= 200 && response.status < 300){
-            this._router.navigate(['/', 'login']);
-          }
-          else{
-            this._snackBar.open(`An error occurred while trying to sign up (Code: ${response.status}). Please try again.`, "Ok", defaultSnackbarConfig);
-          }
-          this.isInProgress = false;
+          this._router.navigate(['/', 'login']);
         }
       );
-    }
-  }
 
-  ngOnDestroy() {
-    if (this._routerSubscription) {
-      this._routerSubscription.unsubscribe();
+      this.isSigningUp = false;
     }
   }
 }
