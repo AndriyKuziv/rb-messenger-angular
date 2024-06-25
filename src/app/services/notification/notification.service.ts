@@ -10,7 +10,7 @@ export class NotificationService {
 
   openSnackBar(message: string, state: "success" | "err" | "warn", action = "", config? : MatSnackBarConfig) {
     const snackBarConfig: MatSnackBarConfig = {
-      duration: 3000,
+      duration: 5000,
       panelClass: `${state}-snack-bar-panel`
     }
 

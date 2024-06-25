@@ -1,9 +1,9 @@
-import { filterUsersRequest } from '../../shared/models/requests/filterUsersRequest';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { User } from '../../shared/models/user';
+import { filterUsersRequest } from '../../shared/interfaces/requests/filter-users-request.interface';
+import { User } from '../../shared/interfaces/models/user.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  getUsers(filterUsersRequest: filterUsersRequest): Observable<User[]> | null {
+  getUsers(filterUsersRequest: filterUsersRequest): Observable<User[]> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
