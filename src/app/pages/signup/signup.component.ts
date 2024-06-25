@@ -12,27 +12,23 @@ import { SharedModule } from '../../shared/shared.module';
   styleUrl: './signup.component.css'
 })
 export class SignupComponent {
-  signupForm: FormGroup;
   minUsernameLen = 4;
   minPasswordLen = 6;
 
+  signupForm: FormGroup = this._fb.group({
+    username: ['', [Validators.required, Validators.minLength(this.minUsernameLen)]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(this.minPasswordLen), this.passwordValidator]],
+    confirmPassword: ['', [Validators.required]]
+  }, { validator: this.passwordMatchValidator });
   isSigningUp: boolean = false;
 
   constructor(
     private _fb: FormBuilder,
     private _authService: AuthService,
     private _router: Router,
-  ) {
-    this.signupForm = this._fb.group({
-      username: ['', [Validators.required, Validators.minLength(this.minUsernameLen)]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(this.minPasswordLen), this.passwordValidator]],
-      confirmPassword: ['', [Validators.required]]
-    },
-    {
-      validator: this.passwordMatchValidator
-    });
-  }
+  )
+  { }
 
   passwordMatchValidator(form: FormGroup) {
     return form.get('password')?.value === form.get('confirmPassword')?.value

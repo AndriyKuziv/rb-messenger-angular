@@ -58,6 +58,14 @@ button:hover {
     background-color: #0056b3;
 }
 
+button:disabled {
+  background-color: #004a99;
+}
+
+button:disabled:hover{
+  background-color: #00346c;
+}
+
 p {
     margin-top: 10px;
 }
