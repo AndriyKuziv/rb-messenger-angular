@@ -2,7 +2,7 @@
   <h3>Users list</h3>
 </div>
 
-<mat-card class="filter-bar">
+<mat-card *userPermissions="['write']" class="filter-bar" >
   <mat-card-content>
     <form [formGroup]="filterForm">
       <mat-form-field>

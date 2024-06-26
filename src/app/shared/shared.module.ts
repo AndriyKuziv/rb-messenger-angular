@@ -14,6 +14,8 @@ import { MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { CustomScalingDirective } from './directives/attribute/customScaling.directive';
+import { UserPermissionsDirective } from './directives/structural/user-permissions.directive';
 
 
 @NgModule({
@@ -21,13 +23,14 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
   imports: [
     MatTableModule, MatPaginatorModule, MatDividerModule, MatButtonModule,
     MatCardModule, MatDialogModule, MatSelectModule, MatOptionModule, MatFormFieldModule,
-    MatLabel, MatInputModule, MatCheckboxModule, CommonModule, NgIf, FormsModule, ReactiveFormsModule
+    MatLabel, MatInputModule, MatCheckboxModule, CommonModule, NgIf, FormsModule, ReactiveFormsModule,
+    CustomScalingDirective, UserPermissionsDirective
   ],
   exports: [
     MatTableModule, MatPaginatorModule, MatDividerModule, MatButtonModule,
     MatCardModule, MatDialogModule, MatSelectModule, MatOptionModule, MatFormFieldModule,
     MatLabel, MatInputModule, MatCheckboxModule, CommonModule, NgIf, FormsModule, ReactiveFormsModule,
-    MatProgressBarModule
+    MatProgressBarModule, CustomScalingDirective, UserPermissionsDirective
   ]
 })
 export class SharedModule { }

@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { environment } from './../../environments/environment';
 import { localStorageConstant } from '../shared/constants/local-storage.constant';
 import { LoginResponse } from '../shared/interfaces/responses/loginResponse';
+import { sessionStorageConstant } from '../shared/constants/session-storage.constant';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,8 @@ export class AuthService {
   private _authStateSubject = new BehaviorSubject<boolean>(this.hasToken());
   authStatus$: Observable<boolean> = this._authStateSubject.asObservable();
 
+  permissions: string[] = [ 'read' ];
+
   constructor(private _http: HttpClient) {}
 
   login(username: string, password: string): Observable<LoginResponse> {
@@ -19,7 +22,22 @@ export class AuthService {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'skip': 'true' });
 
     return this._http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, credentials, { headers })
-      .pipe(tap(response => this.setToken(response?.token)));
+      .pipe(
+        tap(response => this.setToken(response?.token)),
+        tap(response => {
+          if (response){
+            this.permissions = [
+              'read',
+              'write'
+            ]
+
+            sessionStorage.setItem(
+              sessionStorageConstant.permissionsKey,
+              JSON.stringify(this.permissions)
+            );
+          }
+        })
+      );
   }
 
   logout(){
