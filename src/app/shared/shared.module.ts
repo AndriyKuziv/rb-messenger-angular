@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule, CurrencyPipe, NgIf } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDividerModule } from '@angular/material/divider'
 import { MatTableModule } from '@angular/material/table'
@@ -16,10 +16,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CustomScalingDirective } from './directives/attribute/customScaling.directive';
 import { UserPermissionsDirective } from './directives/structural/user-permissions.directive';
+import { NumberFormatterPipe } from './pipes/number-formatter.pipe';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [NumberFormatterPipe],
   imports: [
     MatTableModule, MatPaginatorModule, MatDividerModule, MatButtonModule,
     MatCardModule, MatDialogModule, MatSelectModule, MatOptionModule, MatFormFieldModule,
@@ -30,7 +31,7 @@ import { UserPermissionsDirective } from './directives/structural/user-permissio
     MatTableModule, MatPaginatorModule, MatDividerModule, MatButtonModule,
     MatCardModule, MatDialogModule, MatSelectModule, MatOptionModule, MatFormFieldModule,
     MatLabel, MatInputModule, MatCheckboxModule, CommonModule, NgIf, FormsModule, ReactiveFormsModule,
-    MatProgressBarModule, CustomScalingDirective, UserPermissionsDirective
+    MatProgressBarModule, CustomScalingDirective, UserPermissionsDirective, NumberFormatterPipe
   ]
 })
 export class SharedModule { }
