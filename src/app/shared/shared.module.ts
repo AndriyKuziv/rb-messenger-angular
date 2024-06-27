@@ -17,10 +17,11 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CustomScalingDirective } from './directives/attribute/customScaling.directive';
 import { UserPermissionsDirective } from './directives/structural/user-permissions.directive';
 import { NumberFormatterPipe } from './pipes/number-formatter.pipe';
+import { DateFormatterPipe } from './pipes/date-formatter.pipe';
 
 
 @NgModule({
-  declarations: [NumberFormatterPipe],
+  declarations: [ NumberFormatterPipe, DateFormatterPipe],
   imports: [
     MatTableModule, MatPaginatorModule, MatDividerModule, MatButtonModule,
     MatCardModule, MatDialogModule, MatSelectModule, MatOptionModule, MatFormFieldModule,
@@ -31,7 +32,7 @@ import { NumberFormatterPipe } from './pipes/number-formatter.pipe';
     MatTableModule, MatPaginatorModule, MatDividerModule, MatButtonModule,
     MatCardModule, MatDialogModule, MatSelectModule, MatOptionModule, MatFormFieldModule,
     MatLabel, MatInputModule, MatCheckboxModule, CommonModule, NgIf, FormsModule, ReactiveFormsModule,
-    MatProgressBarModule, CustomScalingDirective, UserPermissionsDirective, NumberFormatterPipe
+    MatProgressBarModule, CustomScalingDirective, UserPermissionsDirective, NumberFormatterPipe, DateFormatterPipe
   ]
 })
 export class SharedModule { }

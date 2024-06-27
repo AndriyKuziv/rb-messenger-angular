@@ -13,7 +13,7 @@ export class AuthService {
   private _authStateSubject = new BehaviorSubject<boolean>(this.hasToken());
   authStatus$: Observable<boolean> = this._authStateSubject.asObservable();
 
-  permissions: string[] = [ 'read' ];
+  permissions: string[] = [ 'read', 'write' ];
 
   constructor(private _http: HttpClient) {}
 

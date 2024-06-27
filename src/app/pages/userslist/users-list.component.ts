@@ -14,7 +14,7 @@ import { UserService } from '../../services/user/user.service';
 })
 export class UserslistComponent implements OnInit, AfterViewInit, OnDestroy {
   possibleNumbersOfUsers: number[] = [ 1, 2, 5, 10 ]
-  displayedColumns: string[] = [ 'id', 'userName', 'email', 'balance', 'phoneNumber' ]
+  displayedColumns: string[] = [ 'id', 'userName', 'email', 'currentUserBalance', 'phoneNumber', 'birthDate' ]
 
   constructor(
     private _fb: FormBuilder,
@@ -64,8 +64,6 @@ export class UserslistComponent implements OnInit, AfterViewInit, OnDestroy {
     let newUsersList = (await firstValueFrom(this._userService.getUsers(this.filterForm.value)))
       .map(user => this.setPlaceholderValues(user));
 
-    console.log(newUsersList);
-
     this.usersList.next(newUsersList);
     this.isLoadingUsers = false;
   }
@@ -75,8 +73,9 @@ export class UserslistComponent implements OnInit, AfterViewInit, OnDestroy {
       id: user.id,
       userName: user.userName,
       email: user.email,
-      balance: user.balance ?? this.getRandomBalance(),
-      phoneNumber: user.phoneNumber ?? '000-000-0000'
+      currentUserBalance: user.currentUserBalance ?? this.getRandomBalance(),
+      phoneNumber: user.phoneNumber ?? '000-000-0000',
+      birthDate: user.birthDate ?? this.getRandomDate()
     };
   }
 
@@ -84,6 +83,18 @@ export class UserslistComponent implements OnInit, AfterViewInit, OnDestroy {
     const randomDecimal = Math.random() * (max - min) + min;
     return Math.round(randomDecimal * 100) / 100;
   }
+
+  private getRandomDate() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+
+    const randomTime = firstDay.getTime() + Math.random() * (lastDay.getTime() - firstDay.getTime());
+    return new Date(randomTime);
+}
 
   ngOnDestroy() {
     this._subscriptions.forEach(sub => sub.unsubscribe());
