@@ -1,5 +1,5 @@
 <div class="container">
-    <h2>Login</h2>
+    <h2 customScaling>Login</h2>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="username">Username</label>
@@ -9,8 +9,10 @@
         <label for="password">Password</label>
         <input id="password" type="password" formControlName="password" required>
       </div>
-      <button type="submit" [disabled]="loginForm.invalid">Login</button>
+      <button type="submit" [disabled]="loginForm.invalid || isLoggingIn">Login</button>
     </form>
     <p>Don't have an account? <a routerLink="/signup">Sign up</a></p>
+
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoggingIn"></mat-progress-bar>
 </div>
-  
+
